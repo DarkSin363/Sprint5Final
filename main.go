@@ -60,7 +60,13 @@ type InfoMessage struct {
 
 // TrainingInfo возвращает структуру InfoMessage, в которой хранится вся информация о проведенной тренировке.
 func (t Training) TrainingInfo() InfoMessage {
-	return InfoMessage{t.TrainingType, t.Duration, t.distance(), t.meanSpeed(), t.Calories()}
+	return InfoMessage{
+		t.TrainingType, 
+		t.Duration, 
+		t.distance(), 
+		t.meanSpeed(), 
+		t.Calories(),
+	}
 }
 
 // String возвращает строку с информацией о проведенной тренировке.
@@ -106,8 +112,7 @@ func (r Running) Calories() float64 {
 // TrainingInfo возвращает структуру InfoMessage с информацией о проведенной тренировке.
 // Это переопределенный метод TrainingInfo() из Training.
 func (r Running) TrainingInfo() InfoMessage {
-	runInfo := r.Training.TrainingInfo()
-	return runInfo
+	return r.Training.TrainingInfo()
 }
 
 // Константы для расчета потраченных килокалорий при ходьбе.
@@ -139,8 +144,7 @@ func (w Walking) Calories() float64 {
 // TrainingInfo возвращает структуру InfoMessage с информацией о проведенной тренировке.
 // Это переопределенный метод TrainingInfo() из Training.
 func (w Walking) TrainingInfo() InfoMessage {
-	walkInfo := w.Training.TrainingInfo()
-	return walkInfo
+	return w.Training.TrainingInfo()
 }
 
 // Константы для расчета потраченных килокалорий при плавании.
@@ -162,10 +166,10 @@ type Swimming struct {
 // длина_бассейна * количество_пересечений / м_в_км / продолжительность_тренировки
 // Это переопределенный метод meanSpeed() из Training.
 func (s Swimming) meanSpeed() float64 {
-	/*if s.Duration.Hours() == 0 {
+	if s.Duration.Hours() == 0 {
 		return 0
-	} */
-	swimSpeed := float64(s.LengthPool) * float64(s.CountPool) / MInKm / s.Duration.Hours()
+	} 
+	swimSpeed := float64(s.LengthPool * s.CountPool) / MInKm / s.Duration.Hours()
 	return swimSpeed
 }
 
@@ -181,10 +185,13 @@ func (s Swimming) Calories() float64 {
 // TrainingInfo returns info about swimming training.
 // Это переопределенный метод TrainingInfo() из Training.
 func (s Swimming) TrainingInfo() InfoMessage {
-	swimInfo := s.Training.TrainingInfo()
-	swimInfo.Distance = float64(s.LengthPool) * float64(s.CountPool) / MInKm
-	swimInfo.Speed = s.meanSpeed()
-	return swimInfo
+    return InfoMessage{
+        TrainingType: s.TrainingType,
+        Duration:     s.Duration,
+        Distance:     float64(s.LengthPool*s.CountPool) / MInKm,
+        Speed:        s.meanSpeed(),
+        Calories:     s.Calories(),
+    }
 }
 
 // ReadData возвращает информацию о проведенной тренировке.
